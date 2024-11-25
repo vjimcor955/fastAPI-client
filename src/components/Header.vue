@@ -41,20 +41,5 @@ export default {
       font-size: 1.6rem;
     }
   }
-
-  .tools {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 25px;
-
-    img {
-      width: 50px;
-    }
-
-    p {
-      font-size: 2rem;
-    }
-  }
 }
 </style>
