@@ -4,12 +4,34 @@
       <img src="../assets/Alberti.png" alt="Logo Alberti" />
       <h1>Cliente FastAPI - Grupo 3</h1>
     </div>
+    <div class="user">
+      <p>Usuario: {{ isLogged ? username : "Invitado" }}</p>
+      <button v-if="isLogged" @click="logout">Logout</button>
+    </div>
   </header>
 </template>
 
 <script>
+import { useUserStore } from "../stores/userStore.js";
+import { computed } from "vue";
+
 export default {
   name: "Header",
+  setup() {
+    const userStore = useUserStore();
+    const username = computed(() => userStore.user.username);
+    const isLogged = computed(() => userStore.isLogged);
+
+    const logout = () => {
+      userStore.logout();
+    };
+
+    return {
+      username,
+      isLogged,
+      logout,
+    };
+  },
 };
 </script>
 
@@ -39,6 +61,27 @@ export default {
 
     h1 {
       font-size: 1.6rem;
+    }
+  }
+
+  .user {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 25px;
+
+    p {
+      font-size: 1.2rem;
+    }
+
+    button {
+      padding: 10px 25px;
+      border: 1px solid #000;
+      border-radius: 5px;
+      background-color: #f0f0f0;
+    }
+    button:hover {
+      background-color: #e0e0e0;
     }
   }
 }
