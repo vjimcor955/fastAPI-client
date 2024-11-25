@@ -4,11 +4,6 @@
       <img src="../assets/Alberti.png" alt="Logo Alberti" />
       <h1>Cliente FastAPI - Grupo 3</h1>
     </div>
-    <div class="tools">
-      <img src="../assets/logo.svg" alt="Logo Vue" />
-      <p>+</p>
-      <img src="../assets/fastapi.svg" alt="Logo FastAPI" />
-    </div>
   </header>
 </template>
 
