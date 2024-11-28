@@ -5,32 +5,34 @@
       <h1>Cliente FastAPI - Grupo 3</h1>
     </div>
     <div class="user">
-      <p>Usuario: {{ isLogged ? username : "Invitado" }}</p>
-      <button v-if="isLogged" @click="logout">Logout</button>
+      <p>Usuario: {{ this.isLogged ? this.username : "Invitado" }}</p>
+      <button v-if="this.isLogged" @click="logout">Logout</button>
     </div>
   </header>
 </template>
 
 <script>
 import { useUserStore } from "../stores/userStore.js";
-import { computed } from "vue";
 
 export default {
   name: "Header",
-  setup() {
-    const userStore = useUserStore();
-    const username = computed(() => userStore.user.username);
-    const isLogged = computed(() => userStore.isLogged);
-
-    const logout = () => {
-      userStore.logout();
-    };
-
+  data() {
     return {
-      username,
-      isLogged,
-      logout,
+      userStore: useUserStore(),
     };
+  },
+  computed: {
+    isLogged() {
+      return this.userStore.isLogged;
+    },
+    username() {
+      return this.userStore.user.username;
+    },
+  },
+  methods: {
+    logout() {
+      this.userStore.logout();
+    },
   },
 };
 </script>
