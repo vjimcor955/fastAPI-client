@@ -10,32 +10,73 @@ export default {
         username: "",
         password: "",
       },
+      errors: {
+        username: "",
+        password: "",
+      },
       isLogged: false,
       usersList: [],
     };
   },
+  computed: {
+    isFormValid() {
+      return this.user.username && this.user.password;
+    },
+  },
   methods: {
+    validateUsername() {
+      if (!this.user.username) {
+        this.errors.username = "Username is required";
+      } else {
+        this.errors.username = "";
+      }
+    },
+    validatePassword() {
+      if (!this.user.password) {
+        this.errors.password = "Password is required";
+      } else {
+        this.errors.password = "";
+      }
+    },
     async login() {
-      event.preventDefault();
-      const response = await fetch("URL_LOGIN", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(this.user),
-      });
-      const data = await response.json();
-      this.userStore.login(data);
+      this.validateUsername();
+      this.validatePassword();
+      if (!this.errors.username && !this.errors.password) {
+        const response = await fetch(
+          // "https://peticiones-fastapi.onrender.com/login",
+          "http://127.0.0.1:8000/login",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(this.user),
+          }
+        );
+        const data = await response.json();
+        this.userStore.login(data);
+        this.user = {
+          username: "",
+          password: "",
+        };
+      }
     },
     async fetchUsers() {
-      event.preventDefault();
-      const response = await fetch("URL_ALLUSERS", {
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        // "https://peticiones-fastapi.onrender.com/users",
+        "http://127.0.0.1:8000/users",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${this.userStore.user.token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       const data = await response.json();
+      if (data.error) {
+        alert(data.error);
+      }
       this.usersList = data;
     },
   },
@@ -46,10 +87,24 @@ export default {
   <div class="home">
     <div class="login">
       <h2 class="title">Login</h2>
-      <form class="form" @submit="this.login">
-        <input type="text" v-model="user.username" placeholder="User" />
-        <input type="password" v-model="user.password" placeholder="Password" />
-        <button type="submit">Login</button>
+      <form class="form" @submit.prevent="login">
+        <input
+          type="text"
+          v-model="user.username"
+          placeholder="User"
+          @blur="validateUsername"
+        />
+        <span v-if="errors.username">{{ errors.username }}</span>
+
+        <input
+          type="password"
+          v-model="user.password"
+          placeholder="Password"
+          @blur="validatePassword"
+        />
+        <span v-if="errors.password">{{ errors.password }}</span>
+
+        <button type="submit" :disabled="!isFormValid">Login</button>
       </form>
     </div>
 
@@ -57,11 +112,17 @@ export default {
       <h2 class="title">Users</h2>
       <button class="button" @click="fetchUsers">Fetch Users</button>
       <div class="content">
-        <ul>
-          <li v-for="user in this.usersList" :key="user.id">
-            ´{{ user.username }} | {{ user.password }} | {{ user.token }}´
+        <ul v-if="!usersList.detail">
+          <li v-for="user in usersList" :key="user.id">
+            - Username: {{ user.username }}
+            <br />
+            - Password: {{ user.password }}
+            <br />
+            - Token: {{ user.token }}
+            <span class="separator"></span>
           </li>
         </ul>
+        <p v-else>{{ usersList.detail }}</p>
       </div>
     </div>
   </div>
@@ -79,7 +140,7 @@ export default {
   background-color: rgba(240, 46, 46, 0.05);
 
   .users {
-    width: 50%;
+    width: 85%;
     height: 60vh;
     display: flex;
     flex-direction: column;
@@ -104,6 +165,34 @@ export default {
       border: 1px solid #000;
       border-radius: 10px;
       background-color: #f0f0f0;
+      overflow-y: auto;
+
+      ul {
+        padding: 10px;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+
+        li {
+          width: 100%;
+          font-weight: bold;
+        }
+
+        .separator {
+          display: block;
+          height: 1px;
+          background: #ccc;
+          margin: 10px 0;
+        }
+      }
+
+      p {
+        text-align: center;
+        font-size: large;
+        font-weight: bold;
+        padding: 25px;
+      }
     }
 
     .button {
