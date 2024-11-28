@@ -43,8 +43,7 @@ export default {
       this.validatePassword();
       if (!this.errors.username && !this.errors.password) {
         const response = await fetch(
-          // "https://peticiones-fastapi.onrender.com/login",
-          "http://127.0.0.1:8000/login",
+          "https://peticiones-fastapi.onrender.com/login",
           {
             method: "POST",
             headers: {
@@ -63,8 +62,7 @@ export default {
     },
     async fetchUsers() {
       const response = await fetch(
-        // "https://peticiones-fastapi.onrender.com/users",
-        "http://127.0.0.1:8000/users",
+        "https://peticiones-fastapi.onrender.com/users",
         {
           method: "GET",
           headers: {
